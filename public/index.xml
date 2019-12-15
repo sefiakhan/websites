@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sefia Khan</title>
+    <link>/</link>
+    <description>Recent content on Sefia Khan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sun, 15 Dec 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>I Love Python</title>
+      <link>/blog/i-love-python/</link>
+      <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/i-love-python/</guid>
+      <description>This semester I learned about Python for the first time. I always believed that Python was a coding language far too complexed for me to learn. Learning python in my computational biology course changed this perception for me. With more practice in Python I realized it is not much different from R studio. The same datasets can be used and the same functions can be carried out in both prgorams.</description>
+    </item>
+    
+    <item>
+      <title>Python</title>
+      <link>/2019/12/12/python/</link>
+      <pubDate>Thu, 12 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/12/12/python/</guid>
+      <description>What do I find interesting about python? Not many things.</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
+      
+      <guid>/projects/</guid>
+      <description>Projects Here are some projects I have been working on:
+  Project 1
+  Project 2
+  </description>
+    </item>
+    
+    <item>
+      <title>PROJECT 1</title>
+      <link>/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project1/</guid>
+      <description>Sefia Khan (sk46882) The datasets I chose were New York City SAT results in 2012 and AP Exam results in 2010. The SAT dataset contains the average student score for each of the SAT sections (critical reading, writing, and math). It also includes the school name and DBN. DBN is a unique identifier that shows the disctrict, borough, and number for each school. The other variable in this dataset is the number of SAT test takers for each school.</description>
+    </item>
+    
+    <item>
+      <title>project 2</title>
+      <link>/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project2/</guid>
+      <description>Sefia Khan (sk46882)  Introduction The dataset that I have chosen are the Happiness Reports in 2015. The dataset includes the name of the country, the region the country belongs to, happiness rank, happiness score, standard error, economy (GDP per Capita), family, health, freddom, trust in government, generosity, and dystopia residual. The happiness score was calcualted my asking people “how would you rate your happiness on a scale of 0 to 10?</description>
+    </item>
+    
+  </channel>
+</rss>

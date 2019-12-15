@@ -1,0 +1,27 @@
+---
+title: I Love Python
+author: Sefia Khan
+date: '2019-12-15'
+slug: i-love-python
+categories: []
+tags: []
+description: ''
+---
+
+This semester I learned about Python for the first time. I always believed that Python was a coding language far too complexed for me to learn. Learning python in my computational biology course changed this perception for me. With more practice in Python I realized it is not much different from R studio. The same datasets can be used and the same functions can be carried out in both prgorams. The connections between the two made learning Python easier than I thought it would be. There are many examples that show how R studio is really similar to Python. For example, you can use python to perform the same calculations of variance, mean, median, or standard deviation.
+
+np.std(faithful.eruptions)
+np.var(faithful.waiting)
+
+Perhaps a little more interesting is the fact that making plots in Python is much easier compared to R studio. The code below shows how easy making a scatter plot is. 
+
+plt.scatter(faithful.waiting, faithful.eruptions)
+
+Another way that the two programs are similar is the fact that both can tidy data. The following code is used in R: 
+
+df %>% select(x,y,z) %>% head(3)
+
+The same result from this code can be produced from the Python code below.
+
+df[['x','y','z']].head()
+

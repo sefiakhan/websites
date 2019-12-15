@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blogs on Sefia Khan</title>
+    <link>/blog/</link>
+    <description>Recent content in Blogs on Sefia Khan</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sun, 15 Dec 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/blog/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>I Love Python</title>
+      <link>/blog/i-love-python/</link>
+      <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/i-love-python/</guid>
+      <description>This semester I learned about Python for the first time. I always believed that Python was a coding language far too complexed for me to learn. Learning python in my computational biology course changed this perception for me. With more practice in Python I realized it is not much different from R studio. The same datasets can be used and the same functions can be carried out in both prgorams.</description>
+    </item>
+    
+  </channel>
+</rss>

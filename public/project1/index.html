@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Sefia Khan" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>PROJECT 1</title>
+    <meta name="generator" content="Hugo 0.61.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project1/">PROJECT 1</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="sefia-khan-sk46882" class="section level2">
+<h2>Sefia Khan (sk46882)</h2>
+<p>The datasets I chose were New York City SAT results in 2012 and AP Exam results in 2010. The SAT dataset contains the average student score for each of the SAT sections (critical reading, writing, and math). It also includes the school name and DBN. DBN is a unique identifier that shows the disctrict, borough, and number for each school. The other variable in this dataset is the number of SAT test takers for each school. The AP datatset also includes school name and DBN. One variable is the number of AP scores of 3,4, or 5. These scores (3,4,5) are passing scores so this variable essentially displays the number of pasing AP scores for each school. The “total exams taken” variable is the number of exams taken at the school while the “AP test takers” is the number of students who took an AP exam. These two datasets were acquired from the New York Education Department. These datasets are interesting to me because when I was in high school I had always believed that because I did well on my SAT that would mean AP exams would be easy for me. However, this was not always the case. I expect that if a school has a high average SAT score then they would have more students who pass their AP exams.</p>
+<div id="tidying-spreadgather" class="section level3">
+<h3>Tidying: Spread/Gather</h3>
+<pre class="r"><code>ap &lt;- read_csv(&quot;ap.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   DBN = col_character(),
+##   SchoolName = col_character(),
+##   `AP Test Takers` = col_double(),
+##   `Total Exams Taken` = col_double(),
+##   `Number of Exams with scores 3 4 or 5` = col_double()
+## )</code></pre>
+<pre class="r"><code>sat &lt;- read_csv(&quot;sat.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   DBN = col_character(),
+##   `SCHOOL NAME` = col_character(),
+##   `Num of SAT Test Takers` = col_character(),
+##   `SAT Critical Reading Avg. Score` = col_character(),
+##   `SAT Math Avg. Score` = col_character(),
+##   `SAT Writing Avg. Score` = col_character()
+## )</code></pre>
+<pre class="r"><code>untidyap &lt;- ap%&gt;%pivot_longer(cols=c(&quot;AP Test Takers&quot;, &quot;Total Exams Taken&quot;), names_to=&quot;Exams Taken&quot;, values_to=&quot;Number&quot;)
+untidysat &lt;- sat%&gt;%pivot_longer(cols=c(&quot;SAT Critical Reading Avg. Score&quot;, &quot;SAT Writing Avg. Score&quot;), names_to=&quot;Verbal Section&quot;, values_to=&quot;Verbal Score&quot;)
+
+newap&lt;- untidyap%&gt;%pivot_wider(names_from=&quot;Exams Taken&quot;, values_from=&quot;Number&quot;)
+newsat &lt;- untidysat%&gt;%pivot_wider(names_from=&quot;Verbal Section&quot;, values_from=&quot;Verbal Score&quot;)</code></pre>
+<p>Because both my datastes were already tidy, so I untidied them and then tidied both again. To untidy my AP dataset I used the “pivot_longer” function. I made this dataset longer by creating new columns for exams taken (AP or total) and placing the values into the number column. This is a much more redundant way to view the data which is why it is untidy. I then used the “pivot_wider” function to create two new columns to revert back to the original AP dataset. For the SAT dataset, I did the exact same thing but with different variables. I created a new column for the verbal section of the SAT (critical reading or writing) and another column for the score recieved on either section. I then tidied the dataset by using “pivot_wider” to revert back to the original SAT dataset.</p>
+</div>
+<div id="joiningmerging" class="section level3">
+<h3>Joining/Merging</h3>
+<p>I joined the SAT and AP dataset by DBN. DBN is the unique code used to identify each school in the NYC system. DBN is the distrcit, borough, and school number. I chose to do an inner join in order to look at the AP and SAT scores for each school without having a lot of NAs. This inner join dropped any variables that did not have a match in the other dataset. Meaning, if there was a school (characterized by DBN) that did not have a match in the other dataset then it was dropped. This new dataset allows me to look at only the scores for schools which have both SAT and AP scores data.</p>
+</div>
+<div id="wrangling" class="section level3">
+<h3>Wrangling</h3>
+<pre class="r"><code>testjoin%&gt;%filter(DBN == &quot;05M670&quot;)%&gt;%glimpse()</code></pre>
+<pre><code>## Observations: 1
+## Variables: 10
+## $ DBN                                    &lt;chr&gt; &quot;05M670&quot;
+## $ `SCHOOL NAME`                          &lt;chr&gt; &quot;THURGOOD MARSHALL ACADEMY FOR…
+## $ `Num of SAT Test Takers`               &lt;chr&gt; &quot;66&quot;
+## $ `SAT Critical Reading Avg. Score`      &lt;chr&gt; &quot;396&quot;
+## $ `SAT Math Avg. Score`                  &lt;chr&gt; &quot;402&quot;
+## $ `SAT Writing Avg. Score`               &lt;chr&gt; &quot;404&quot;
+## $ SchoolName                             &lt;chr&gt; &quot;THURGOOD MARSHALL ACADEMY&quot;
+## $ `AP Test Takers`                       &lt;dbl&gt; 37
+## $ `Total Exams Taken`                    &lt;dbl&gt; 38
+## $ `Number of Exams with scores 3 4 or 5` &lt;dbl&gt; NA</code></pre>
+<pre class="r"><code>testjoin%&gt;%arrange(desc(`SAT Math Avg. Score`))%&gt;%glimpse()</code></pre>
+<pre><code>## Observations: 254
+## Variables: 10
+## $ DBN                                    &lt;chr&gt; &quot;14K322&quot;, &quot;19K420&quot;, &quot;02M475&quot;, …
+## $ `SCHOOL NAME`                          &lt;chr&gt; &quot;FOUNDATIONS ACADEMY&quot;, &quot;FRANKL…
+## $ `Num of SAT Test Takers`               &lt;chr&gt; &quot;s&quot;, &quot;s&quot;, &quot;832&quot;, &quot;731&quot;, &quot;227&quot;,…
+## $ `SAT Critical Reading Avg. Score`      &lt;chr&gt; &quot;s&quot;, &quot;s&quot;, &quot;679&quot;, &quot;632&quot;, &quot;635&quot;,…
+## $ `SAT Math Avg. Score`                  &lt;chr&gt; &quot;s&quot;, &quot;s&quot;, &quot;735&quot;, &quot;688&quot;, &quot;682&quot;,…
+## $ `SAT Writing Avg. Score`               &lt;chr&gt; &quot;s&quot;, &quot;s&quot;, &quot;682&quot;, &quot;649&quot;, &quot;636&quot;,…
+## $ SchoolName                             &lt;chr&gt; &quot;Foundations Academy&quot;, &quot;FRANKL…
+## $ `AP Test Takers`                       &lt;dbl&gt; 42, 10, 1510, 1190, 528, 215, …
+## $ `Total Exams Taken`                    &lt;dbl&gt; 53, 10, 2819, 2435, 905, 338, …
+## $ `Number of Exams with scores 3 4 or 5` &lt;dbl&gt; NA, NA, 2648, 2189, 809, 275, …</code></pre>
+<pre class="r"><code>testjoin%&gt;%select(&#39;SchoolName&#39;,&#39;AP Test Takers&#39;, &#39;Num of SAT Test Takers&#39;)%&gt;%glimpse()</code></pre>
+<pre><code>## Observations: 254
+## Variables: 3
+## $ SchoolName               &lt;chr&gt; &quot;UNIVERSITY NEIGHBORHOOD H.S.&quot;, &quot;EAST SIDE C…
+## $ `AP Test Takers`         &lt;dbl&gt; 39, 19, 24, 255, NA, 21, 99, 42, 25, NA, 213…
+## $ `Num of SAT Test Takers` &lt;chr&gt; &quot;91&quot;, &quot;70&quot;, &quot;112&quot;, &quot;159&quot;, &quot;58&quot;, &quot;85&quot;, &quot;48&quot;, …</code></pre>
+<pre class="r"><code>addmath &lt;- as.numeric(as.character(testjoin$`SAT Math Avg. Score`))</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code>addcr &lt;- as.numeric(as.character(testjoin$`SAT Critical Reading Avg. Score`))</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code>addw &lt;- as.numeric(as.character(testjoin$`SAT Writing Avg. Score`))</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code>mutatejoin &lt;- testjoin%&gt;%mutate(TotalSATScore = addmath + addcr + addw) %&gt;% select(DBN, `SCHOOL NAME`, `Num of SAT Test Takers`, `SAT Critical Reading Avg. Score`,`SAT Math Avg. Score`,`SAT Writing Avg. Score`, TotalSATScore, everything())
+
+mutatejoin%&gt;%summarize(meanSAT=mean(TotalSATScore, na.rm=T))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   meanSAT
+##     &lt;dbl&gt;
+## 1   1241.</code></pre>
+<pre class="r"><code>mutatejoin%&gt;%summarize(minMath= min(`SAT Math Avg. Score`, na.rm=T))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   minMath
+##   &lt;chr&gt;  
+## 1 322</code></pre>
+<pre class="r"><code>mutatejoin%&gt;%summarize(distinctWriting= n_distinct(`SAT Writing Avg. Score`, na.rm=T))%&gt;%na.omit()</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   distinctWriting
+##             &lt;int&gt;
+## 1             138</code></pre>
+<pre class="r"><code>mutatejoin%&gt;%summarize(medianAPpass= median(`Number of Exams with scores 3 4 or 5`, na.rm=T))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   medianAPpass
+##          &lt;dbl&gt;
+## 1           37</code></pre>
+<pre class="r"><code>mutatejoin%&gt;%summarize(IQRAPpass = IQR(`Number of Exams with scores 3 4 or 5`, na.rm=T))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   IQRAPpass
+##       &lt;dbl&gt;
+## 1        92</code></pre>
+<pre class="r"><code>mutatejoin$AverageSAT_compared_to_all_US &lt;- ifelse(mutatejoin$TotalSATScore &gt;1490, c(&quot;above average&quot;), c(&quot;below average&quot;))
+
+
+mutatejoin%&gt;%group_by(AverageSAT_compared_to_all_US)%&gt;%summarize(varSATCR =var(`SAT Critical Reading Avg. Score`, na.rm=T))</code></pre>
+<pre><code>## Warning in var(`SAT Critical Reading Avg. Score`, na.rm = T): NAs introduced by
+## coercion</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   AverageSAT_compared_to_all_US varSATCR
+##   &lt;chr&gt;                            &lt;dbl&gt;
+## 1 above average                    3269.
+## 2 below average                    1278.
+## 3 &lt;NA&gt;                               NA</code></pre>
+<pre class="r"><code>mutatejoin%&gt;%group_by(AverageSAT_compared_to_all_US)%&gt;%summarize(distinctAPstudents = n_distinct(`AP Test Takers`, 4))%&gt;%na.omit()</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   AverageSAT_compared_to_all_US distinctAPstudents
+##   &lt;chr&gt;                                      &lt;int&gt;
+## 1 above average                                 21
+## 2 below average                                120</code></pre>
+<pre class="r"><code>mutatejoin%&gt;%group_by(SchoolName)%&gt;%summarize(medianAPpass= median(`Number of Exams with scores 3 4 or 5`))</code></pre>
+<pre><code>## # A tibble: 254 x 2
+##    SchoolName                                         medianAPpass
+##    &lt;chr&gt;                                                     &lt;dbl&gt;
+##  1 A PHILIP RANDOLPH CAMPUS                                     72
+##  2 ABRAHAM LINCOLN HS                                           18
+##  3 Academy for College Preparation and Career Explora            7
+##  4 Academy for Language and Technology                          20
+##  5 Academy for Scholarship and Entrepreneurship: A Co           NA
+##  6 Academy for Social Action: A College Board School            NA
+##  7 ACADEMY OF AMER. STUDIES HS                                 119
+##  8 Academy of Finance and  Enterprise                           40
+##  9 Academy of Urban Planning                                    10
+## 10 ACORN COMMUNITY HIGH SCHOOL                                  NA
+## # … with 244 more rows</code></pre>
+<pre class="r"><code>mutatejoin%&gt;%group_by(AverageSAT_compared_to_all_US) %&gt;%summarize(var_verbal = var(`SAT Critical Reading Avg. Score`, `SAT Writing Avg. Score`))</code></pre>
+<pre><code>## Warning in var(`SAT Critical Reading Avg. Score`, `SAT Writing Avg. Score`): NAs
+## introduced by coercion</code></pre>
+<pre><code>## Warning in var(`SAT Critical Reading Avg. Score`, `SAT Writing Avg. Score`): NAs
+## introduced by coercion</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   AverageSAT_compared_to_all_US var_verbal
+##   &lt;chr&gt;                              &lt;dbl&gt;
+## 1 above average                      3212.
+## 2 below average                      1244.
+## 3 &lt;NA&gt;                                 NA</code></pre>
+<pre class="r"><code>mutatejoin%&gt;%group_by(`SCHOOL NAME`, SchoolName) %&gt;% summarize(meanSAT_to_AP= mean(TotalSATScore/`Number of Exams with scores 3 4 or 5`, na.rm=T))%&gt;%na.omit()</code></pre>
+<pre><code>## # A tibble: 151 x 3
+## # Groups:   SCHOOL NAME [151]
+##    `SCHOOL NAME`                         SchoolName                meanSAT_to_AP
+##    &lt;chr&gt;                                 &lt;chr&gt;                             &lt;dbl&gt;
+##  1 A. PHILIP RANDOLPH CAMPUS HIGH SCHOOL A PHILIP RANDOLPH CAMPUS           18.2
+##  2 ABRAHAM LINCOLN HIGH SCHOOL           ABRAHAM LINCOLN HS                 68.1
+##  3 ACADEMY FOR COLLEGE PREPARATION AND … Academy for College Prep…         163. 
+##  4 ACADEMY FOR LANGUAGE AND TECHNOLOGY   Academy for Language and…          47.6
+##  5 ACADEMY OF AMERICAN STUDIES           ACADEMY OF AMER. STUDIES…          12.4
+##  6 ACADEMY OF FINANCE AND ENTERPRISE     Academy of Finance and  …          32  
+##  7 ACADEMY OF URBAN PLANNING             Academy of Urban Planning         106  
+##  8 ART AND DESIGN HIGH SCHOOL            HS OF ART AND DESIGN               39.8
+##  9 ASTOR COLLEGIATE ACADEMY              Astor Collegiate Academy           97.4
+## 10 AVIATION CAREER &amp; TECHNICAL EDUCATIO… AVIATION CAREER &amp; TECHNI…          22.4
+## # … with 141 more rows</code></pre>
+<p>To explore my data and gain more understanding of what it entails, I used the filter, arrange, and select dplyr functions. By using arrange, I was able to see all the math scores from greatest to least. This showed me that Stuyvesant High School had the highest average math score for its students. To perform a mutate function I combined SAT scores for math, critical reading, and writing to create a Total SAT Scores column. I then used the summarize function to perform a variety of statistical functions on my dataset. I calculated mean SAT score by looking at the Total SAT Score column I created. The mean SAT score for New York City schools was 1240. This is an extremely high mean score as the average SAT score is around 1060. Despite these relatively high scores, there are still some schools with lower scores. To get some more information on the lower scale of scores I used the min function on the Average Math SAT Score and saw the lowest score was 322. This is a very low score, which shows that schools in NYC are not necessarily all academically renowned. I also found the number of distinct scores for the SAT Writing section and found there were 138; this shows again how there is a variety of scores across New York. To gain an idea of the center and spread for passing AP scores I used median and IQR and looked at the Number of Exams with scores 3, 4, or 5. The IQR was 92 students with a passing score and the median was 37 students with a passing score. This shows that the center is 37 and the spread is 92, which means the data is less evenly distributed.
+To look at specific categorical variables and their relation to summary statistics I used the group by and summarize function. Because my only categorical variable was school which does not really narrow the dataset, I created a new categorical variable. This new variable, average SAT compared to all US, compares the average SAT for a school and if the value is above 1490 then the school is labeled as above average and if it is below then the school is below average. So, I grouped by this new variable and calculated the variance of SAT critical reading average score. The variance for above average is 3268 while below average is 1277. The high variance for the above average schools indicates that the data points are very spread out from the mean. Both have a high variance but the above average section has a significantly higher average. I also looked at variance for SAT critical and writing sections and found a similar pattern of a larger variance for above average and a lower for below average. The variance scores may be related to the fact that above average has a lower amount of schools. I then grouped by the average SAT compared to all US to look at the distinct number of students who are AP exam takers. I found that the above average schools had 21 distinct amounts of student AP exam takers while below average had 120. This tells me there were more numbers of exam takers for schools who were below average while there were less for above average. This may show an association between SAT scores and AP scores. I also looked at the median for passing AP schools for all schools which showed a wide variety of numbers. My last analysis was for Schools and the mean total SAT score to mean AP passing score. A lower mean showed that the scores were near each other and most schools displayed this pattern.</p>
+</div>
+<div id="visualizing" class="section level3">
+<h3>Visualizing</h3>
+<pre class="r"><code>mutatejoin %&gt;% ggplot()+
+   geom_quantile(aes(x = `TotalSATScore` , y = `Number of Exams with scores 3 4 or 5`, color = AverageSAT_compared_to_all_US), stat = &quot;summary&quot;, fun.y = &quot;mean&quot;) + theme_dark() + labs(x = &quot;Total SAT Score&quot;, y = &quot;Number of Passing AP Scores&quot;, title = &quot;Relationship of SAT and AP Scores&quot;, color = &quot;Average SAT Compared to US&quot;)</code></pre>
+<pre><code>## Warning: Removed 103 rows containing non-finite values (stat_summary).</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>mutatejoin %&gt;% ggplot(aes(x = `SAT Critical Reading Avg. Score`, y= `SAT Writing Avg. Score`)) + geom_point(size = 2, aes(color=log10(addmath))) + scale_x_discrete(breaks = c(280, 380, 480, 580, 680)) +
+           scale_y_discrete(breaks= c(285, 385, 485, 585, 685))+ 
+  labs(x = &quot;SAT Critical Reading Scores&quot;, y = &quot;SAT Writing Scores&quot;, title = &quot;Relationship of SAT Sections&quot;, color=&quot;log(SAT Math Scores)&quot;)+ scale_color_gradient(low = &quot;red&quot;, high =&quot;yellow&quot;)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
+<p>For my first ggplot, I plotted total SAT Score against the number of passing AP scores while comparing the school’s standing (above/below average). Overall, a pattern of higher SAT scores with higher AP scores was seen. Schools that were above average in their SAT scores had the tendecny to have more number of students with passing SAT scores but the results were not entirely consistent.However, because the number of above average schools is only 21 compared to 120 for below average, this may skew the results. It can be seen that below average schools mostly stayed in the low numbers for number of passing AP scores. This is indication of a direct association with SAT and AP scores.
+The next plot showed the three sections of the SAT (writing, critical reading, and math). In order to color by the average math scores, I took the log of those numbers (as shown in the legend). The plot shows positive correlation between the SAT critical reading and writing sections. So, if a student’s reading score is high then their writing score is most likely also high. When looking at these two sections in relation to the math section, there is also a positive trend. Only with some exceptions, there is a trend of higher verbal scores leading to higher math scores.</p>
+</div>
+<div id="dimensionality-reduction" class="section level3">
+<h3>Dimensionality Reduction</h3>
+<pre class="r"><code>data &lt;- mutatejoin%&gt;%select_if(is.numeric)%&gt;%scale()
+newmutate &lt;- mutatejoin
+rownames(data) &lt;- newmutate$`SAT Math Avg. Score`
+mutatejoin_pca &lt;- princomp(na.omit(data))
+names(mutatejoin_pca)</code></pre>
+<pre><code>## [1] &quot;sdev&quot;     &quot;loadings&quot; &quot;center&quot;   &quot;scale&quot;    &quot;n.obs&quot;    &quot;scores&quot;   &quot;call&quot;</code></pre>
+<pre class="r"><code>summary(mutatejoin_pca, loadings=T)</code></pre>
+<pre><code>## Importance of components:
+##                          Comp.1    Comp.2    Comp.3      Comp.4
+## Standard deviation     2.070458 0.8429058 0.2446322 0.076758367
+## Proportion of Variance 0.846687 0.1403293 0.0118200 0.001163701
+## Cumulative Proportion  0.846687 0.9870163 0.9988363 1.000000000
+## 
+## Loadings:
+##                                      Comp.1 Comp.2 Comp.3 Comp.4
+## TotalSATScore                         0.400  0.915              
+## AP Test Takers                        0.554 -0.252  0.548 -0.574
+## Total Exams Taken                     0.561 -0.270  0.119  0.773
+## Number of Exams with scores 3 4 or 5  0.467 -0.161 -0.827 -0.268</code></pre>
+<pre class="r"><code>eigval &lt;- mutatejoin_pca$sdev^2
+varprop=round(eigval/sum(eigval),2)
+
+ggplot()+geom_bar(aes(y=varprop,x=1:4),stat=&quot;identity&quot;)+xlab(&quot;&quot;)+geom_path(aes(y=varprop,x=1:4))+
+ geom_text(aes(x=1:4,y=varprop,label=round(varprop,2)),vjust=1,col=&quot;white&quot;,size=5)+
+ scale_y_continuous(breaks=seq(0,.6,.2),labels = scales::percent)+
+ scale_x_continuous(breaks=1:10)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>sefia&lt;-data.frame(PC1=mutatejoin_pca$scores[,1], PC2=mutatejoin_pca$scores[,2])
+ggplot(sefia,aes(PC1, PC2))+geom_point()</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+<p>The principal component analysis that I performed shows that my variables are not correlated as each value is negative. The plot shows a skew to the right with many outliers. This would mean that there is not much of a correlation between the variables. These results negate my observations in the previous work. I expected there to be a correlation between SAT and AP scores but the PCA shows that there is no correlation.</p>
+</div>
+</div>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

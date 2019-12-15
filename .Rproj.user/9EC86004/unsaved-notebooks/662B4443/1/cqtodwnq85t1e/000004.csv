@@ -1,0 +1,4 @@
+"0","print(r.hi, hi)
+"
+"2","Error in print(r.hi, hi) : object 'r.hi' not found
+"

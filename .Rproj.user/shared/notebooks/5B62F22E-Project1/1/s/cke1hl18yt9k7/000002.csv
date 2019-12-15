@@ -1,0 +1,11 @@
+"0","ap <- read_csv(""ap.csv"")
+"
+"2","Parsed with column specification:
+cols(
+  DBN = [31mcol_character()[39m,
+  SchoolName = [31mcol_character()[39m,
+  `AP Test Takers` = [32mcol_double()[39m,
+  `Total Exams Taken` = [32mcol_double()[39m,
+  `Number of Exams with scores 3 4 or 5` = [32mcol_double()[39m
+)
+"

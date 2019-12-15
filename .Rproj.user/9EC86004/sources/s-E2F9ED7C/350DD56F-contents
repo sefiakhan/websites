@@ -1,0 +1,258 @@
+---
+title: "project 2"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#LEAVE THIS CHUNK ALONE!
+library(knitr)
+opts_chunk$set(fig.align="center", fig.height=5, message=FALSE, warning=FALSE, fig.width=8, tidy.opts=list(width.cutoff=60),tidy=TRUE)
+
+class_diag<-function(probs,truth){
+  
+  tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+
+  if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+  
+  #CALCULATE EXACT AUC
+  ord<-order(probs, decreasing=TRUE)
+  probs <- probs[ord]; truth <- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+  TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+  
+  n <- length(TPR)
+  auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,auc)
+}
+
+```
+
+## Sefia Khan (sk46882)
+
+## Introduction
+
+The dataset that I have chosen are the Happiness Reports in 2015. The dataset includes the name of the country, the region the country belongs to, happiness rank, happiness score, standard error, economy (GDP per Capita), family, health, freddom, trust in government, generosity, and dystopia residual. The happiness score was calcualted my asking people "how would you rate your happiness on a scale of 0 to 10?" The economy variable calcualted the extent to which GDP contributes to happiness score. Trust in government measures the extent to which Perception of Corruption contributes to Happiness Score. This dataset is interesting because it shows how different parts of the world have different degrees of happiness that are related to the way they carry out their lives and their surroundings. 
+
+## Renaming
+
+```{r}
+
+happy <- read.csv("~/Downloads/2015.csv")
+library(ggplot2)
+library(dplyr)
+happy <- happy%>% rename(economy = Economy..GDP.per.Capita.)%>%glimpse()
+happy <- happy%>% rename(score = Happiness.Score)%>%glimpse()
+happy <- happy%>% rename(trust.in.gov = Trust..Government.Corruption.)%>%glimpse()
+happy$average.happiness <- ifelse(happy$score>5.376, c("above average"), c("below average"))
+```
+
+##MANOVA
+```{r}
+man1<-manova(cbind(score, trust.in.gov )~Region, data=happy)
+summary(man1)
+
+aov <- aov(score~Region, data=happy)
+summary(aov)
+aov1 <- aov(trust.in.gov~Region, data=happy)
+summary(aov1)
+
+pairwise.t.test(happy$score, happy$Region, p.adj="none")
+pairwise.t.test(happy$trust.in.gov, happy$Region, p.adj="none")
+
+0.05/23
+1-.95^23
+ggplot(happy, aes(x = trust.in.gov, y = score)) +
+ geom_point(alpha = .5) + geom_density_2d(h=2) + coord_fixed() + facet_wrap(~Region)
+```
+I conducted 1 MANOVA, 2 ANOVA, and 20 t tests. The bonferonni adjusted rate I should be using is 0.002173913 because I performed 22 tests in all. The type I error rate is 0.6926431. Using this bonferonni rate the MANOVA is still significant which means that for at least one response variable, at least one group mean differs. The ANOVA tests are also significant. The T tests for score and region show that only Wester Europe, Sub-Saharan Africa, Southern Asia, and Latin America and Caribbean have significant results. The bonferroni correction changed some significant effects to insignificant. All the assumptions for these tests may not have been met. The assumptions of multivariate normality and homogenity may not have been met. This is because the data is over the entire world so it differs tremendously which would also mean that there are outliers. The graphs show that multivariate normality is not met because some regions show DVs that are not uniform. 
+
+
+## Randomization Test
+```{r}
+ggplot(happy,aes(economy,fill=average.happiness))+geom_histogram(bins=6.5)+facet_wrap(~average.happiness,ncol=2)
+
+haps <- happy%>%data.frame(average.happiness = c("above average", "below average"),
+avg = 0:1)
+haps%>%group_by(avg)%>%summarize(means=mean(economy))%>%summarize(diff(means))
+
+## 0 = above, 1 = below
+rand_dist<-vector()
+for(i in 1:5000){
+new<-data.frame(economy=sample(haps$economy),avg=haps$avg)
+rand_dist[i]<-mean(new[new$avg=="0",]$economy)-
+ mean(new[new$avg=="1",]$economy) }
+mean(rand_dist< 0.01400658)*2
+
+{hist(rand_dist, main="", ylab=""); abline(v=0.01400658, col = "blue")}
+
+t.test(data=haps, economy~avg)
+```
+
+My null hypothesis is that the country's economies are the same for people who are have a happiness secore below the average and those who have a score above the average. My alternative hypothesis is that the country's economies are not the same for people who are have a happiness secore below the average and those who have a score above the average.  My new p value is 1.12. After conducting the t-test I fail to reject my null hypothesis and conclude that the means of the economies are the same. 
+
+## Linear Regression 
+```{r}
+##mean center numeric variables
+happy$economy_c <- happy$economy - mean(happy$economy, na.rm=T)
+happy$trust.in.gov_c <- happy$trust.in.gov - mean(happy$trust.in.gov, na.rm=T)
+
+##linear regression
+fit<-lm(economy_c ~ trust.in.gov_c * average.happiness, data=happy)
+summary(fit)
+
+##plots
+happy[!is.na(happy$Region),]%>%
+  ggplot(aes(economy_c,trust.in.gov_c)) +
+  geom_smooth(method="lm")
+
+ggplot(happy, aes(x = trust.in.gov_c, y = economy_c)) + 
+  geom_point() +
+  stat_smooth(method = "lm", col = "red")
+
+##assumptions
+resids<-fit$residuals
+fitvals<-fit$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, color='red')
+ggplot()+geom_qq(aes(sample=resids))
+
+
+##Robust standard errors
+library(sandwich)
+library(lmtest)
+
+fit2<-lm(economy_c ~ trust.in.gov_c * average.happiness, data=happy)
+summary(fit2)
+ coeftest(fit2, vcov = vcovHC(fit2))
+ 
+#no interactions 
+happynointeract<-lm(economy_c ~ trust.in.gov_c + average.happiness, data=happy)
+
+summary(happynointeract)
+
+#likelihood ratio test
+lrtest(fit2, happynointeract)
+
+```
+
+Economy was regressed on the interaction of trust in government and average happiness. The intercept coefficient estimate was 0.26236 which is the economy when trust in government and average happiness are 0. The coefficient for trust in government is 0.95605 which is the slope of trust in government on economy while holding average happiness constant. THis low number would mean there is not much of a realtionship between trust in government and economy. The coefficient for below average happiness is -0.56386 while holding trust in government and economy constant. Because this is a negative number that must mean there is not a relationship between below average happiness of people and economy of the region they live in. The coefficient for trust.in.gov_c:average.happinessbelow average is -2.03574 which is a the largest negative number. This number means there is not a big difference in slopes between below average happiness and trust in government. This variable explains whether there is an interaction between trust in government and whether the people have below average happiness. 
+
+I checked assumptions of linearity, normality, and homoskedasticity using graphs. The graphs showed all assumptions to be met. 
+
+Using robust standard errors, all variables showed to be significant which is also the same result I received without robust standard errors.The estimates remained the same but standard errors decreased for each variable. The p values increased but still remained small enough to be significant. The t values also increased. The results showed there is a significant interaction between trust in government and happiness being below average. This would mean that if perception of corruption in government is high then that would have an effect on a region's people being below average for happiness. The below average happiness is also significant which means happiness is related to the economy of a country. The significant value for trust in government means that economy is also related to whether perception of corruption in a government is high/low.
+
+My model explaines 57% of variation in outcome. After conducting a likelihood ratio test I received a significant p value which indicates that the interaction model fits the data better. 
+
+
+## Bootstrapped SEs
+```{r}
+boot_dat <- happy[sample(nrow(happy), replace=TRUE),]
+samp_boot <- replicate(5000, {
+  boot_dat <- boot_dat[sample(nrow(boot_dat),replace=TRUE),]
+  newfit <- lm(economy_c ~ trust.in.gov_c * average.happiness, data=boot_dat)
+  coef(newfit)
+})
+samp_boot%>%t%>%as.data.frame%>%summarize_all(sd)
+```
+
+Compared to original standard errors, the bootstrapped SEs are lower for all variables except below average happiness. Orginal standard error for below average happiness wasa 0.04500 while bootstrapped SE was 0.03869006 so this is only a slight decrease. The interaction bootstrapped SE is 0.3177046 while robust SE is 0.3767856 Compared to robust standard errors, bootsrapped SEs are all lower.
+
+## Logistic Regression
+```{r}
+happy <-happy%>%data.frame(average.happiness = c("above average", "below average"),
+avg = 0:1)
+logistic <-glm(avg ~ trust.in.gov + economy, data=happy, family=binomial(link="logit"))
+summary(logistic)
+exp(coef(logistic))
+
+##Confusion Matrix
+happy$prob <- predict(logistic, type = "response")
+happy$pred <- ifelse(happy$prob > 0.5, 1,0)
+
+table(predict=as.numeric(happy$prob>0.5), 
+  truth=happy$average.happiness)%>%addmargins()
+
+(61+67)/158 #accuracy
+67/84 #sensitivity
+61/74 #specificity
+
+class_diag(happy$prob, happy$average.happiness)
+##ROC
+library(plotROC)
+roc <- ggplot(happy)+geom_roc(aes(d=average.happiness, m=prob), n.cuts=0)
+roc
+calc_auc(roc)
+ggplot(happy, aes(economy,prob))+geom_point(aes(color=pred))
+
+new <- happy%>%dplyr::select(-Country, -Region)
+new <- new %>%dplyr::select(-average.happiness)
+new <- new %>%dplyr::select(-average.happiness.1)
+new <- new %>%dplyr::select(-prob)
+new <- new %>%dplyr::select(-pred)
+##10-fold CV
+set.seed(1234)
+k=10
+data2<-new[sample(nrow(new)),]
+folds<-cut(seq(1:nrow(new)),breaks=k,labels=F)
+
+diagss<-NULL
+for(i in 1:10){
+ CV<-data2[folds!=i,]
+test<-data2[folds==i,]
+truth<-test$avg
+fit<-glm(avg~ trust.in.gov + economy,data=CV,family="binomial")
+probs<-predict(fit, newdata = test,type="response")
+diagss<-rbind(diagss,class_diag(probs,truth))
+}
+apply(diagss,2,mean)
+
+```
+
+For 0 average happiness, the log odds is 6.8952. THat is the intercept value. Every 1 unit increase in trust in government multiplies odds by 2.399377e-03. Every 1 unit increase in economy multiplies the odds of average happiness by 1.137400e-03. 
+The accuracy is 0.8101266. Sensitivity is 0.797619. Specificity is 0.8243243. PPV is 0.8375.
+The AUC is 0.922 which is pretty accurate. The AUC is the probability that a person with above average happiness has a higher prediction than a randomly selected person with below average happiness. THe plot shows the relationship between sensitivity and specificty. The area under this curve shows the AUC which is a high number. The 10 fold CV gives a 0.448 accuracy, 0.372 sensitivity and a 0.5919 recall. THis is worse than the logistic regression without the cross validation. 
+
+
+
+## LASSO Regression
+```{r}
+library(glmnet)
+x <- model.matrix(fit)
+x <- x[,-new$avg]
+x <- scale(x)
+y <- as.matrix(new$avg)
+
+# cv<-cv.glmnet(x,y) lasso1<-glmnet(x,y,lambda=cv$lambda.1se)
+# coef(lasso1)
+
+set.seed(1234)
+data1<-new[sample(nrow(new)),]
+folds<-cut(seq(1:nrow(new)),breaks=k,labels=F)
+diags<-NULL
+for(i in 1:k){
+ train<-data1[folds!=i,]
+ test<-data1[folds==i,]
+ truth<-test$avg
+ fit<-glm(avg~Happiness.Rank,data=train,family="binomial")
+ probs<-predict(fit,newdata = test,type="response")
+ preds<-ifelse(probs>.5,1,0)
+ diags<-rbind(diags,class_diag(probs,truth))
+}
+diags%>%summarize_all(mean)
+
+
+```
+
+To perform a LASSO regression, I had to check which variables could be used as predictors. The only variable that appeared in the test was "Happiness Rank." So I used this variable in my 10 fold CV. The out of sample accuracy for this model is 0.38. This is worse than the 10 fold CV.
+```

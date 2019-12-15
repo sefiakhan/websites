@@ -1,0 +1,132 @@
+---
+title: "PROJECT 1"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library("tidyverse")
+```
+
+## Sefia Khan (sk46882)
+
+The datasets I chose were New York City SAT results in 2012 and AP Exam results in 2010. The SAT dataset contains the average student score for each of the SAT sections (critical reading, writing, and math). It also includes the school name and DBN. DBN is a unique identifier that shows the disctrict, borough, and number for each school. The other variable in this dataset is the number of SAT test takers for each school. The AP datatset also includes school name and DBN. One variable is the number of AP scores of 3,4, or 5. These scores (3,4,5) are passing scores so this variable essentially displays the number of pasing AP scores for each school. The "total exams taken" variable is the number of exams taken at the school while the "AP test takers" is the number of students who took an AP exam. These two datasets were acquired from the New York Education Department. These datasets are interesting to me because when I was in high school I had always believed that because I did well on my SAT that would mean AP exams would be easy for me. However, this was not always the case. I expect that if a school has a high average SAT score then they would have more students who pass their AP exams. 
+
+### Tidying: Spread/Gather
+
+```{r}
+
+ap <- read_csv("2010-ap-college-board-school-level-results.csv")
+
+sat <- read_csv("2012-sat-results.csv")
+  
+untidyap <- ap%>%pivot_longer(cols=c("AP Test Takers", "Total Exams Taken"), names_to="Exams Taken", values_to="Number")
+untidysat <- sat%>%pivot_longer(cols=c("SAT Critical Reading Avg. Score", "SAT Writing Avg. Score"), names_to="Verbal Section", values_to="Verbal Score")
+
+newap<- untidyap%>%pivot_wider(names_from="Exams Taken", values_from="Number")
+newsat <- untidysat%>%pivot_wider(names_from="Verbal Section", values_from="Verbal Score")
+  
+```
+
+Because both my datastes were already tidy, so I untidied them and then tidied both again. To untidy my AP dataset I used the "pivot_longer" function. I made this dataset longer by creating new columns for exams taken (AP or total) and placing the values into the number column. This is a much more redundant way to view the data which is why it is untidy. I then used the "pivot_wider" function to create two new columns to revert back to the original AP dataset. For the SAT dataset, I did the exact same thing but with different variables. I created a new column for the verbal section of the SAT (critical reading or writing) and another column for the score recieved on either section. I then tidied the dataset by using "pivot_wider" to revert back to the original SAT dataset. 
+
+### Joining/Merging
+
+```{r pressure, echo=FALSE}
+testjoin <- inner_join(sat, ap, by="DBN")
+
+```
+
+I joined the SAT and AP dataset by DBN. DBN is the unique code used to identify each school in the NYC system. DBN is the distrcit, borough, and school number. I chose to do an inner join in order to look at the AP and SAT scores for each school without having a lot of NAs. This inner join dropped any variables that did not have a match in the other dataset. Meaning, if there was a school (characterized by DBN) that did not have a match in the other dataset then it was dropped. This new dataset allows me to look at only the scores for schools which have both SAT and AP scores data. 
+
+### Wrangling
+
+```{r}
+testjoin%>%filter(DBN == "05M670")%>%glimpse()
+
+testjoin%>%arrange(desc(`SAT Math Avg. Score`))%>%glimpse()
+
+testjoin%>%select('SchoolName','AP Test Takers', 'Num of SAT Test Takers')%>%glimpse()
+
+addmath <- as.numeric(as.character(testjoin$`SAT Math Avg. Score`))
+addcr <- as.numeric(as.character(testjoin$`SAT Critical Reading Avg. Score`))
+addw <- as.numeric(as.character(testjoin$`SAT Writing Avg. Score`))
+
+mutatejoin <- testjoin%>%mutate(TotalSATScore = addmath + addcr + addw) %>% select(DBN, `SCHOOL NAME`, `Num of SAT Test Takers`, `SAT Critical Reading Avg. Score`,`SAT Math Avg. Score`,`SAT Writing Avg. Score`, TotalSATScore, everything())
+
+mutatejoin%>%summarize(meanSAT=mean(TotalSATScore, na.rm=T))
+
+mutatejoin%>%summarize(minMath= min(`SAT Math Avg. Score`, na.rm=T))
+
+mutatejoin%>%summarize(distinctWriting= n_distinct(`SAT Writing Avg. Score`, na.rm=T))%>%na.omit()
+
+mutatejoin%>%summarize(medianAPpass= median(`Number of Exams with scores 3 4 or 5`, na.rm=T))
+
+mutatejoin%>%summarize(IQRAPpass = IQR(`Number of Exams with scores 3 4 or 5`, na.rm=T))
+
+
+mutatejoin$AverageSAT_compared_to_all_US <- ifelse(mutatejoin$TotalSATScore >1490, c("above average"), c("below average"))
+
+
+mutatejoin%>%group_by(AverageSAT_compared_to_all_US)%>%summarize(varSATCR =var(`SAT Critical Reading Avg. Score`, na.rm=T))
+
+mutatejoin%>%group_by(AverageSAT_compared_to_all_US)%>%summarize(distinctAPstudents = n_distinct(`AP Test Takers`, 4))%>%na.omit()
+
+mutatejoin%>%group_by(SchoolName)%>%summarize(medianAPpass= median(`Number of Exams with scores 3 4 or 5`))
+
+mutatejoin%>%group_by(AverageSAT_compared_to_all_US) %>%summarize(var_verbal = var(`SAT Critical Reading Avg. Score`, `SAT Writing Avg. Score`))
+
+mutatejoin%>%group_by(`SCHOOL NAME`, SchoolName) %>% summarize(meanSAT_to_AP= mean(TotalSATScore/`Number of Exams with scores 3 4 or 5`, na.rm=T))%>%na.omit()
+
+```
+
+To explore my data and gain more understanding of what it entails, I used the filter, arrange, and select dplyr functions. By using arrange, I was able to see all the math scores from greatest to least. This showed me that Stuyvesant High School had the highest average math score for its students. To perform a mutate function I combined SAT scores for math, critical reading, and writing to create a Total SAT Scores column. I then used the summarize function to perform a variety of statistical functions on my dataset. I calculated mean SAT score by looking at the Total SAT Score column I created. The mean SAT score for New York City schools was 1240. This is an extremely high mean score as the average SAT score is around 1060. Despite these relatively high scores, there are still some schools with lower scores. To get some more information on the lower scale of scores I used the min function on the Average Math SAT Score and saw the lowest score was 322. This is a very low score, which shows that schools in NYC are not necessarily all academically renowned. I also found the number of distinct scores for the SAT Writing section and found there were 138; this shows again how there is a variety of scores across New York. To gain an idea of the center and spread for passing AP scores I used median and IQR and looked at the Number of Exams with scores 3, 4, or 5. The IQR was 92 students with a passing score and the median was 37 students with a passing score. This shows that the center is 37 and the spread is 92, which means the data is less evenly distributed. 
+	To look at specific categorical variables and their relation to summary statistics I used the group by and summarize function. Because my only categorical variable was school which does not really narrow the dataset, I created a new categorical variable. This new variable, average SAT compared to all US, compares the average SAT for a school and if the value is above 1490 then the school is labeled as above average and if it is below then the school is below average. So, I grouped by this new variable and calculated the variance of SAT critical reading average score. The variance for above average is 3268 while below average is 1277. The high variance for the above average schools indicates that the data points are very spread out from the mean. Both have a high variance but the above average section has a significantly higher average. I also looked at variance for SAT critical and writing sections and found a similar pattern of a larger variance for above average and a lower for below average. The variance scores may be related to the fact that above average has a lower amount of schools. I then grouped by the average SAT compared to all US to look at the distinct number of students who are AP exam takers. I found that the above average schools had 21 distinct amounts of student AP exam takers while below average had 120. This tells me there were more numbers of exam takers for schools who were below average while there were less for above average. This may show an association between SAT scores and AP scores. I also looked at the median for passing AP schools for all schools which showed a wide variety of numbers.  My last analysis was for Schools and the mean total SAT score to mean AP passing score. A lower mean showed that the scores were near each other and most schools displayed this pattern. 
+
+
+### Visualizing
+
+```{r}
+
+
+mutatejoin %>% ggplot()+
+   geom_quantile(aes(x = `TotalSATScore` , y = `Number of Exams with scores 3 4 or 5`, color = AverageSAT_compared_to_all_US), stat = "summary", fun.y = "mean") + theme_dark() + labs(x = "Total SAT Score", y = "Number of Passing AP Scores", title = "Relationship of SAT and AP Scores", color = "Average SAT Compared to US")
+  
+mutatejoin %>% ggplot(aes(x = `SAT Critical Reading Avg. Score`, y= `SAT Writing Avg. Score`)) + geom_point(size = 2, aes(color=log10(addmath))) + scale_x_discrete(breaks = c(280, 380, 480, 580, 680)) +
+           scale_y_discrete(breaks= c(285, 385, 485, 585, 685))+ 
+  labs(x = "SAT Critical Reading Scores", y = "SAT Writing Scores", title = "Relationship of SAT Sections", color="log(SAT Math Scores)")+ scale_color_gradient(low = "red", high ="yellow")
+  
+
+```
+
+  For my first ggplot, I plotted total SAT Score against the number of passing AP scores while comparing the school's standing (above/below average). Overall, a pattern of higher SAT scores with higher AP scores was seen. Schools that were above average in their SAT scores had the tendecny to have more number of students with passing SAT scores but the results were not entirely consistent.However, because the number of above average schools is only 21 compared to 120 for below average, this may skew the results. It can be seen that below average schools mostly stayed in the low numbers for number of passing AP scores. This is indication of a direct association with SAT and AP scores.
+    The next plot showed the three sections of the SAT (writing, critical reading, and math). In order to color by the average math scores, I took the log of those numbers (as shown in the legend). The plot shows positive correlation between the SAT critical reading and writing sections. So, if a student's reading score is high then their writing score is most likely also high. When looking at these two sections in relation to the math section, there is also a positive trend. Only with some exceptions, there is a trend of higher verbal scores leading to higher math scores. 
+
+### Dimensionality Reduction
+
+```{r}
+data <- mutatejoin%>%select_if(is.numeric)%>%scale()
+newmutate <- mutatejoin
+rownames(data) <- newmutate$`SAT Math Avg. Score`
+mutatejoin_pca <- princomp(na.omit(data))
+names(mutatejoin_pca)
+summary(mutatejoin_pca, loadings=T)
+
+eigval <- mutatejoin_pca$sdev^2
+varprop=round(eigval/sum(eigval),2)
+
+ggplot()+geom_bar(aes(y=varprop,x=1:4),stat="identity")+xlab("")+geom_path(aes(y=varprop,x=1:4))+
+ geom_text(aes(x=1:4,y=varprop,label=round(varprop,2)),vjust=1,col="white",size=5)+
+ scale_y_continuous(breaks=seq(0,.6,.2),labels = scales::percent)+
+ scale_x_continuous(breaks=1:10)
+
+sefia<-data.frame(PC1=mutatejoin_pca$scores[,1], PC2=mutatejoin_pca$scores[,2])
+ggplot(sefia,aes(PC1, PC2))+geom_point()
+
+```
+
+  The principal component analysis that I performed shows that my variables are not correlated as each value is negative. The plot shows a skew to the right with many outliers. This would mean that there is not much of a correlation between the variables. These results negate my observations in the previous work. I expected there to be a correlation between SAT and AP scores but the PCA shows that there is no correlation. 
+

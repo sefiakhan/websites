@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Sefia Khan" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>project 2</title>
+    <meta name="generator" content="Hugo 0.61.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project2/">project 2</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="sefia-khan-sk46882" class="section level2">
+<h2>Sefia Khan (sk46882)</h2>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>The dataset that I have chosen are the Happiness Reports in 2015. The dataset includes the name of the country, the region the country belongs to, happiness rank, happiness score, standard error, economy (GDP per Capita), family, health, freddom, trust in government, generosity, and dystopia residual. The happiness score was calcualted my asking people “how would you rate your happiness on a scale of 0 to 10?” The economy variable calcualted the extent to which GDP contributes to happiness score. Trust in government measures the extent to which Perception of Corruption contributes to Happiness Score. This dataset is interesting because it shows how different parts of the world have different degrees of happiness that are related to the way they carry out their lives and their surroundings.</p>
+</div>
+<div id="renaming" class="section level2">
+<h2>Renaming</h2>
+<pre class="r"><code>happy &lt;- read.csv(&quot;~/Downloads/2015.csv&quot;)
+library(ggplot2)
+library(dplyr)
+happy &lt;- happy%&gt;% rename(economy = Economy..GDP.per.Capita.)%&gt;%glimpse()</code></pre>
+<pre><code>## Observations: 158
+## Variables: 12
+## $ Country                       &lt;fct&gt; Switzerland, Iceland, Denmark, Norway, …
+## $ Region                        &lt;fct&gt; Western Europe, Western Europe, Western…
+## $ Happiness.Rank                &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, …
+## $ Happiness.Score               &lt;dbl&gt; 7.587, 7.561, 7.527, 7.522, 7.427, 7.40…
+## $ Standard.Error                &lt;dbl&gt; 0.03411, 0.04884, 0.03328, 0.03880, 0.0…
+## $ economy                       &lt;dbl&gt; 1.39651, 1.30232, 1.32548, 1.45900, 1.3…
+## $ Family                        &lt;dbl&gt; 1.34951, 1.40223, 1.36058, 1.33095, 1.3…
+## $ Health..Life.Expectancy.      &lt;dbl&gt; 0.94143, 0.94784, 0.87464, 0.88521, 0.9…
+## $ Freedom                       &lt;dbl&gt; 0.66557, 0.62877, 0.64938, 0.66973, 0.6…
+## $ Trust..Government.Corruption. &lt;dbl&gt; 0.41978, 0.14145, 0.48357, 0.36503, 0.3…
+## $ Generosity                    &lt;dbl&gt; 0.29678, 0.43630, 0.34139, 0.34699, 0.4…
+## $ Dystopia.Residual             &lt;dbl&gt; 2.51738, 2.70201, 2.49204, 2.46531, 2.4…</code></pre>
+<pre class="r"><code>happy &lt;- happy%&gt;% rename(score = Happiness.Score)%&gt;%glimpse()</code></pre>
+<pre><code>## Observations: 158
+## Variables: 12
+## $ Country                       &lt;fct&gt; Switzerland, Iceland, Denmark, Norway, …
+## $ Region                        &lt;fct&gt; Western Europe, Western Europe, Western…
+## $ Happiness.Rank                &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, …
+## $ score                         &lt;dbl&gt; 7.587, 7.561, 7.527, 7.522, 7.427, 7.40…
+## $ Standard.Error                &lt;dbl&gt; 0.03411, 0.04884, 0.03328, 0.03880, 0.0…
+## $ economy                       &lt;dbl&gt; 1.39651, 1.30232, 1.32548, 1.45900, 1.3…
+## $ Family                        &lt;dbl&gt; 1.34951, 1.40223, 1.36058, 1.33095, 1.3…
+## $ Health..Life.Expectancy.      &lt;dbl&gt; 0.94143, 0.94784, 0.87464, 0.88521, 0.9…
+## $ Freedom                       &lt;dbl&gt; 0.66557, 0.62877, 0.64938, 0.66973, 0.6…
+## $ Trust..Government.Corruption. &lt;dbl&gt; 0.41978, 0.14145, 0.48357, 0.36503, 0.3…
+## $ Generosity                    &lt;dbl&gt; 0.29678, 0.43630, 0.34139, 0.34699, 0.4…
+## $ Dystopia.Residual             &lt;dbl&gt; 2.51738, 2.70201, 2.49204, 2.46531, 2.4…</code></pre>
+<pre class="r"><code>happy &lt;- happy%&gt;% rename(trust.in.gov = Trust..Government.Corruption.)%&gt;%glimpse()</code></pre>
+<pre><code>## Observations: 158
+## Variables: 12
+## $ Country                  &lt;fct&gt; Switzerland, Iceland, Denmark, Norway, Canad…
+## $ Region                   &lt;fct&gt; Western Europe, Western Europe, Western Euro…
+## $ Happiness.Rank           &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 1…
+## $ score                    &lt;dbl&gt; 7.587, 7.561, 7.527, 7.522, 7.427, 7.406, 7.…
+## $ Standard.Error           &lt;dbl&gt; 0.03411, 0.04884, 0.03328, 0.03880, 0.03553,…
+## $ economy                  &lt;dbl&gt; 1.39651, 1.30232, 1.32548, 1.45900, 1.32629,…
+## $ Family                   &lt;dbl&gt; 1.34951, 1.40223, 1.36058, 1.33095, 1.32261,…
+## $ Health..Life.Expectancy. &lt;dbl&gt; 0.94143, 0.94784, 0.87464, 0.88521, 0.90563,…
+## $ Freedom                  &lt;dbl&gt; 0.66557, 0.62877, 0.64938, 0.66973, 0.63297,…
+## $ trust.in.gov             &lt;dbl&gt; 0.41978, 0.14145, 0.48357, 0.36503, 0.32957,…
+## $ Generosity               &lt;dbl&gt; 0.29678, 0.43630, 0.34139, 0.34699, 0.45811,…
+## $ Dystopia.Residual        &lt;dbl&gt; 2.51738, 2.70201, 2.49204, 2.46531, 2.45176,…</code></pre>
+<pre class="r"><code>happy$average.happiness &lt;- ifelse(happy$score&gt;5.376, c(&quot;above average&quot;), c(&quot;below average&quot;))</code></pre>
+<p>##MANOVA</p>
+<pre class="r"><code>man1&lt;-manova(cbind(score, trust.in.gov )~Region, data=happy)
+summary(man1)</code></pre>
+<pre><code>##            Df  Pillai approx F num Df den Df    Pr(&gt;F)    
+## Region      9 0.76393   10.163     18    296 &lt; 2.2e-16 ***
+## Residuals 148                                             
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>aov &lt;- aov(score~Region, data=happy)
+summary(aov)</code></pre>
+<pre><code>##              Df Sum Sq Mean Sq F value Pr(&gt;F)    
+## Region        9 123.68  13.743   24.76 &lt;2e-16 ***
+## Residuals   148  82.15   0.555                   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>aov1 &lt;- aov(trust.in.gov~Region, data=happy)
+summary(aov1)</code></pre>
+<pre><code>##              Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## Region        9 0.4744 0.05271   4.363 4.61e-05 ***
+## Residuals   148 1.7877 0.01208                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>pairwise.t.test(happy$score, happy$Region, p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  happy$score and happy$Region 
+## 
+##                                 Australia and New Zealand
+## Central and Eastern Europe      0.00046                  
+## Eastern Asia                    0.00717                  
+## Latin America and Caribbean     0.03996                  
+## Middle East and Northern Africa 0.00087                  
+## North America                   0.98717                  
+## Southeastern Asia               0.00093                  
+## Southern Asia                   1.2e-05                  
+## Sub-Saharan Africa              6.0e-08                  
+## Western Europe                  0.28195                  
+##                                 Central and Eastern Europe Eastern Asia
+## Central and Eastern Europe      -                          -           
+## Eastern Asia                    0.38160                    -           
+## Latin America and Caribbean     0.00017                    0.13290     
+## Middle East and Northern Africa 0.73315                    0.52819     
+## North America                   0.00050                    0.00758     
+## Southeastern Asia               0.95663                    0.43300     
+## Southern Asia                   0.01777                    0.01273     
+## Sub-Saharan Africa              4.8e-09                    2.4e-05     
+## Western Europe                  2.4e-09                    0.00244     
+##                                 Latin America and Caribbean
+## Central and Eastern Europe      -                          
+## Eastern Asia                    -                          
+## Latin America and Caribbean     -                          
+## Middle East and Northern Africa 0.00165                    
+## North America                   0.04207                    
+## Southeastern Asia               0.00569                    
+## Southern Asia                   3.3e-06                    
+## Sub-Saharan Africa              &lt; 2e-16                    
+## Western Europe                  0.01775                    
+##                                 Middle East and Northern Africa North America
+## Central and Eastern Europe      -                               -            
+## Eastern Asia                    -                               -            
+## Latin America and Caribbean     -                               -            
+## Middle East and Northern Africa -                               -            
+## North America                   0.00094                         -            
+## Southeastern Asia               0.76526                         0.00100      
+## Southern Asia                   0.01263                         1.3e-05      
+## Sub-Saharan Africa              2.4e-08                         6.7e-08      
+## Western Europe                  1.5e-07                         0.29172      
+##                                 Southeastern Asia Southern Asia
+## Central and Eastern Europe      -                 -            
+## Eastern Asia                    -                 -            
+## Latin America and Caribbean     -                 -            
+## Middle East and Northern Africa -                 -            
+## North America                   -                 -            
+## Southeastern Asia               -                 -            
+## Southern Asia                   0.05166           -            
+## Sub-Saharan Africa              8.1e-05           0.21748      
+## Western Europe                  8.2e-06           1.2e-09      
+##                                 Sub-Saharan Africa
+## Central and Eastern Europe      -                 
+## Eastern Asia                    -                 
+## Latin America and Caribbean     -                 
+## Middle East and Northern Africa -                 
+## North America                   -                 
+## Southeastern Asia               -                 
+## Southern Asia                   -                 
+## Sub-Saharan Africa              -                 
+## Western Europe                  &lt; 2e-16           
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(happy$trust.in.gov, happy$Region, p.adj=&quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  happy$trust.in.gov and happy$Region 
+## 
+##                                 Australia and New Zealand
+## Central and Eastern Europe      0.00020                  
+## Eastern Asia                    0.00365                  
+## Latin America and Caribbean     0.00088                  
+## Middle East and Northern Africa 0.01056                  
+## North America                   0.17853                  
+## Southeastern Asia               0.00561                  
+## Southern Asia                   0.00124                  
+## Sub-Saharan Africa              0.00094                  
+## Western Europe                  0.04915                  
+##                                 Central and Eastern Europe Eastern Asia
+## Central and Eastern Europe      -                          -           
+## Eastern Asia                    0.40664                    -           
+## Latin America and Caribbean     0.32796                    0.83560     
+## Middle East and Northern Africa 0.00343                    0.29283     
+## North America                   0.05176                    0.19608     
+## Southeastern Asia               0.12558                    0.68453     
+## Southern Asia                   0.73230                    0.68133     
+## Sub-Saharan Africa              0.16724                    0.93687     
+## Western Europe                  9.1e-06                    0.04317     
+##                                 Latin America and Caribbean
+## Central and Eastern Europe      -                          
+## Eastern Asia                    -                          
+## Latin America and Caribbean     -                          
+## Middle East and Northern Africa 0.05933                    
+## North America                   0.11963                    
+## Southeastern Asia               0.43417                    
+## Southern Asia                   0.75937                    
+## Sub-Saharan Africa              0.81851                    
+## Western Europe                  0.00084                    
+##                                 Middle East and Northern Africa North America
+## Central and Eastern Europe      -                               -            
+## Eastern Asia                    -                               -            
+## Latin America and Caribbean     -                               -            
+## Middle East and Northern Africa -                               -            
+## North America                   0.44419                         -            
+## Southeastern Asia               0.49145                         0.28103      
+## Southern Asia                   0.10308                         0.10996      
+## Sub-Saharan Africa              0.05664                         0.13283      
+## Western Europe                  0.14942                         0.87543      
+##                                 Southeastern Asia Southern Asia
+## Central and Eastern Europe      -                 -            
+## Eastern Asia                    -                 -            
+## Latin America and Caribbean     -                 -            
+## Middle East and Northern Africa -                 -            
+## North America                   -                 -            
+## Southeastern Asia               -                 -            
+## Southern Asia                   0.38030           -            
+## Sub-Saharan Africa              0.50029           0.63622      
+## Western Europe                  0.06907           0.00802      
+##                                 Sub-Saharan Africa
+## Central and Eastern Europe      -                 
+## Eastern Asia                    -                 
+## Latin America and Caribbean     -                 
+## Middle East and Northern Africa -                 
+## North America                   -                 
+## Southeastern Asia               -                 
+## Southern Asia                   -                 
+## Sub-Saharan Africa              -                 
+## Western Europe                  0.00039           
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>0.05/23</code></pre>
+<pre><code>## [1] 0.002173913</code></pre>
+<pre class="r"><code>1-.95^23</code></pre>
+<pre><code>## [1] 0.6926431</code></pre>
+<pre class="r"><code>ggplot(happy, aes(x = trust.in.gov, y = score)) +
+ geom_point(alpha = .5) + geom_density_2d(h=2) + coord_fixed() + facet_wrap(~Region)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-2-1.png" width="768" style="display: block; margin: auto;" />
+I conducted 1 MANOVA, 2 ANOVA, and 20 t tests. The bonferonni adjusted rate I should be using is 0.002173913 because I performed 22 tests in all. The type I error rate is 0.6926431. Using this bonferonni rate the MANOVA is still significant which means that for at least one response variable, at least one group mean differs. The ANOVA tests are also significant. The T tests for score and region show that only Wester Europe, Sub-Saharan Africa, Southern Asia, and Latin America and Caribbean have significant results. The bonferroni correction changed some significant effects to insignificant. All the assumptions for these tests may not have been met. The assumptions of multivariate normality and homogenity may not have been met. This is because the data is over the entire world so it differs tremendously which would also mean that there are outliers. The graphs show that multivariate normality is not met because some regions show DVs that are not uniform.</p>
+</div>
+<div id="randomization-test" class="section level2">
+<h2>Randomization Test</h2>
+<pre class="r"><code>ggplot(happy,aes(economy,fill=average.happiness))+geom_histogram(bins=6.5)+facet_wrap(~average.happiness,ncol=2)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>haps &lt;- happy%&gt;%data.frame(average.happiness = c(&quot;above average&quot;, &quot;below average&quot;),
+avg = 0:1)
+haps%&gt;%group_by(avg)%&gt;%summarize(means=mean(economy))%&gt;%summarize(diff(means))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `diff(means)`
+##           &lt;dbl&gt;
+## 1        0.0140</code></pre>
+<pre class="r"><code>## 0 = above, 1 = below
+rand_dist&lt;-vector()
+for(i in 1:5000){
+new&lt;-data.frame(economy=sample(haps$economy),avg=haps$avg)
+rand_dist[i]&lt;-mean(new[new$avg==&quot;0&quot;,]$economy)-
+ mean(new[new$avg==&quot;1&quot;,]$economy) }
+mean(rand_dist&lt; 0.01400658)*2</code></pre>
+<pre><code>## [1] 1.152</code></pre>
+<pre class="r"><code>{hist(rand_dist, main=&quot;&quot;, ylab=&quot;&quot;); abline(v=0.01400658, col = &quot;blue&quot;)}</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-3-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>t.test(data=haps, economy~avg)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  economy by avg
+## t = -0.21771, df = 155.84, p-value = 0.8279
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.1410909  0.1130778
+## sample estimates:
+## mean in group 0 mean in group 1 
+##       0.8391339       0.8531405</code></pre>
+<p>My null hypothesis is that the country’s economies are the same for people who are have a happiness secore below the average and those who have a score above the average. My alternative hypothesis is that the country’s economies are not the same for people who are have a happiness secore below the average and those who have a score above the average. My new p value is 1.12. After conducting the t-test I fail to reject my null hypothesis and conclude that the means of the economies are the same.</p>
+</div>
+<div id="linear-regression" class="section level2">
+<h2>Linear Regression</h2>
+<pre class="r"><code>##mean center numeric variables
+happy$economy_c &lt;- happy$economy - mean(happy$economy, na.rm=T)
+happy$trust.in.gov_c &lt;- happy$trust.in.gov - mean(happy$trust.in.gov, na.rm=T)
+
+##linear regression
+fit&lt;-lm(economy_c ~ trust.in.gov_c * average.happiness, data=happy)
+summary(fit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = economy_c ~ trust.in.gov_c * average.happiness, 
+##     data = happy)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.63365 -0.18211  0.03917  0.17784  0.53150 
+## 
+## Coefficients:
+##                                               Estimate Std. Error t value
+## (Intercept)                                    0.26236    0.03224   8.138
+## trust.in.gov_c                                 0.95605    0.22314   4.284
+## average.happinessbelow average                -0.56386    0.04500 -12.530
+## trust.in.gov_c:average.happinessbelow average -2.03574    0.40644  -5.009
+##                                               Pr(&gt;|t|)    
+## (Intercept)                                   1.26e-13 ***
+## trust.in.gov_c                                3.21e-05 ***
+## average.happinessbelow average                 &lt; 2e-16 ***
+## trust.in.gov_c:average.happinessbelow average 1.49e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.2669 on 154 degrees of freedom
+## Multiple R-squared:   0.57,  Adjusted R-squared:  0.5617 
+## F-statistic: 68.06 on 3 and 154 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>##plots
+happy[!is.na(happy$Region),]%&gt;%
+  ggplot(aes(economy_c,trust.in.gov_c)) +
+  geom_smooth(method=&quot;lm&quot;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(happy, aes(x = trust.in.gov_c, y = economy_c)) + 
+  geom_point() +
+  stat_smooth(method = &quot;lm&quot;, col = &quot;red&quot;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-4-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>##assumptions
+resids&lt;-fit$residuals
+fitvals&lt;-fit$fitted.values
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, color=&#39;red&#39;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-4-3.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot()+geom_qq(aes(sample=resids))</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-4-4.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>##Robust standard errors
+library(sandwich)
+library(lmtest)
+
+fit2&lt;-lm(economy_c ~ trust.in.gov_c * average.happiness, data=happy)
+summary(fit2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = economy_c ~ trust.in.gov_c * average.happiness, 
+##     data = happy)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.63365 -0.18211  0.03917  0.17784  0.53150 
+## 
+## Coefficients:
+##                                               Estimate Std. Error t value
+## (Intercept)                                    0.26236    0.03224   8.138
+## trust.in.gov_c                                 0.95605    0.22314   4.284
+## average.happinessbelow average                -0.56386    0.04500 -12.530
+## trust.in.gov_c:average.happinessbelow average -2.03574    0.40644  -5.009
+##                                               Pr(&gt;|t|)    
+## (Intercept)                                   1.26e-13 ***
+## trust.in.gov_c                                3.21e-05 ***
+## average.happinessbelow average                 &lt; 2e-16 ***
+## trust.in.gov_c:average.happinessbelow average 1.49e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.2669 on 154 degrees of freedom
+## Multiple R-squared:   0.57,  Adjusted R-squared:  0.5617 
+## F-statistic: 68.06 on 3 and 154 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code> coeftest(fit2, vcov = vcovHC(fit2))</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##                                                Estimate Std. Error  t value
+## (Intercept)                                    0.262362   0.024274  10.8082
+## trust.in.gov_c                                 0.956054   0.148084   6.4562
+## average.happinessbelow average                -0.563858   0.043445 -12.9786
+## trust.in.gov_c:average.happinessbelow average -2.035740   0.387441  -5.2543
+##                                                Pr(&gt;|t|)    
+## (Intercept)                                   &lt; 2.2e-16 ***
+## trust.in.gov_c                                1.328e-09 ***
+## average.happinessbelow average                &lt; 2.2e-16 ***
+## trust.in.gov_c:average.happinessbelow average 4.874e-07 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>#no interactions 
+happynointeract&lt;-lm(economy_c ~ trust.in.gov_c + average.happiness, data=happy)
+
+summary(happynointeract)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = economy_c ~ trust.in.gov_c + average.happiness, 
+##     data = happy)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.57080 -0.20561  0.03578  0.17480  0.61153 
+## 
+## Coefficients:
+##                                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                     0.28644    0.03426   8.360 3.37e-14 ***
+## trust.in.gov_c                  0.34244    0.20047   1.708   0.0896 .  
+## average.happinessbelow average -0.53878    0.04807 -11.208  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.2869 on 155 degrees of freedom
+## Multiple R-squared:    0.5,  Adjusted R-squared:  0.4936 
+## F-statistic:  77.5 on 2 and 155 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>#likelihood ratio test
+lrtest(fit2, happynointeract)</code></pre>
+<pre><code>## Likelihood ratio test
+## 
+## Model 1: economy_c ~ trust.in.gov_c * average.happiness
+## Model 2: economy_c ~ trust.in.gov_c + average.happiness
+##   #Df  LogLik Df  Chisq Pr(&gt;Chisq)    
+## 1   5 -13.463                         
+## 2   4 -25.386 -1 23.845  1.044e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Economy was regressed on the interaction of trust in government and average happiness. The intercept coefficient estimate was 0.26236 which is the economy when trust in government and average happiness are 0. The coefficient for trust in government is 0.95605 which is the slope of trust in government on economy while holding average happiness constant. THis low number would mean there is not much of a realtionship between trust in government and economy. The coefficient for below average happiness is -0.56386 while holding trust in government and economy constant. Because this is a negative number that must mean there is not a relationship between below average happiness of people and economy of the region they live in. The coefficient for trust.in.gov_c:average.happinessbelow average is -2.03574 which is a the largest negative number. This number means there is not a big difference in slopes between below average happiness and trust in government. This variable explains whether there is an interaction between trust in government and whether the people have below average happiness.</p>
+<p>I checked assumptions of linearity, normality, and homoskedasticity using graphs. The graphs showed all assumptions to be met.</p>
+<p>Using robust standard errors, all variables showed to be significant which is also the same result I received without robust standard errors.The estimates remained the same but standard errors decreased for each variable. The p values increased but still remained small enough to be significant. The t values also increased. The results showed there is a significant interaction between trust in government and happiness being below average. This would mean that if perception of corruption in government is high then that would have an effect on a region’s people being below average for happiness. The below average happiness is also significant which means happiness is related to the economy of a country. The significant value for trust in government means that economy is also related to whether perception of corruption in a government is high/low.</p>
+<p>My model explaines 57% of variation in outcome. After conducting a likelihood ratio test I received a significant p value which indicates that the interaction model fits the data better.</p>
+</div>
+<div id="bootstrapped-ses" class="section level2">
+<h2>Bootstrapped SEs</h2>
+<pre class="r"><code>boot_dat &lt;- happy[sample(nrow(happy), replace=TRUE),]
+samp_boot &lt;- replicate(5000, {
+  boot_dat &lt;- boot_dat[sample(nrow(boot_dat),replace=TRUE),]
+  newfit &lt;- lm(economy_c ~ trust.in.gov_c * average.happiness, data=boot_dat)
+  coef(newfit)
+})
+samp_boot%&gt;%t%&gt;%as.data.frame%&gt;%summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept) trust.in.gov_c average.happinessbelow average
+## 1  0.02459131       0.156403                     0.04109266
+##   trust.in.gov_c:average.happinessbelow average
+## 1                                     0.3684327</code></pre>
+<p>Compared to original standard errors, the bootstrapped SEs are lower for all variables except below average happiness. Orginal standard error for below average happiness wasa 0.04500 while bootstrapped SE was 0.03869006 so this is only a slight decrease. The interaction bootstrapped SE is 0.3177046 while robust SE is 0.3767856 Compared to robust standard errors, bootsrapped SEs are all lower.</p>
+</div>
+<div id="logistic-regression" class="section level2">
+<h2>Logistic Regression</h2>
+<pre class="r"><code>happy &lt;-happy%&gt;%data.frame(average.happiness = c(&quot;above average&quot;, &quot;below average&quot;),
+avg = 0:1)
+logistic &lt;-glm(avg ~ trust.in.gov + economy, data=happy, family=binomial(link=&quot;logit&quot;))
+summary(logistic)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = avg ~ trust.in.gov + economy, family = binomial(link = &quot;logit&quot;), 
+##     data = happy)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -1.40860  -1.14864  -0.09177   1.18515   1.27938  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)  -0.18155    0.38408  -0.473    0.636
+## trust.in.gov  1.64068    1.42444   1.152    0.249
+## economy      -0.06268    0.41891  -0.150    0.881
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 219.03  on 157  degrees of freedom
+## Residual deviance: 217.63  on 155  degrees of freedom
+## AIC: 223.63
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<pre class="r"><code>exp(coef(logistic))</code></pre>
+<pre><code>##  (Intercept) trust.in.gov      economy 
+##    0.8339746    5.1586766    0.9392453</code></pre>
+<pre class="r"><code>##Confusion Matrix
+happy$prob &lt;- predict(logistic, type = &quot;response&quot;)
+happy$pred &lt;- ifelse(happy$prob &gt; 0.5, 1,0)
+
+table(predict=as.numeric(happy$prob&gt;0.5), 
+  truth=happy$average.happiness)%&gt;%addmargins()</code></pre>
+<pre><code>##        truth
+## predict above average below average Sum
+##     0              40            61 101
+##     1              34            23  57
+##     Sum            74            84 158</code></pre>
+<pre class="r"><code>(61+67)/158 #accuracy</code></pre>
+<pre><code>## [1] 0.8101266</code></pre>
+<pre class="r"><code>67/84 #sensitivity</code></pre>
+<pre><code>## [1] 0.797619</code></pre>
+<pre class="r"><code>61/74 #specificity</code></pre>
+<pre><code>## [1] 0.8243243</code></pre>
+<pre class="r"><code>class_diag(happy$prob, happy$average.happiness)</code></pre>
+<pre><code>##                     acc      sens      spec       ppv auc
+## below average 0.3987342 0.2738095 0.5405405 0.4035088  NA</code></pre>
+<pre class="r"><code>##ROC
+library(plotROC)
+roc &lt;- ggplot(happy)+geom_roc(aes(d=average.happiness, m=prob), n.cuts=0)
+roc</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-6-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>calc_auc(roc)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.4132883</code></pre>
+<pre class="r"><code>ggplot(happy, aes(economy,prob))+geom_point(aes(color=pred))</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-6-2.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>new &lt;- happy%&gt;%dplyr::select(-Country, -Region)
+new &lt;- new %&gt;%dplyr::select(-average.happiness)
+new &lt;- new %&gt;%dplyr::select(-average.happiness.1)
+new &lt;- new %&gt;%dplyr::select(-prob)
+new &lt;- new %&gt;%dplyr::select(-pred)
+##10-fold CV
+set.seed(1234)
+k=10
+data2&lt;-new[sample(nrow(new)),]
+folds&lt;-cut(seq(1:nrow(new)),breaks=k,labels=F)
+
+diagss&lt;-NULL
+for(i in 1:10){
+ CV&lt;-data2[folds!=i,]
+test&lt;-data2[folds==i,]
+truth&lt;-test$avg
+fit&lt;-glm(avg~ trust.in.gov + economy,data=CV,family=&quot;binomial&quot;)
+probs&lt;-predict(fit, newdata = test,type=&quot;response&quot;)
+diagss&lt;-rbind(diagss,class_diag(probs,truth))
+}
+apply(diagss,2,mean)</code></pre>
+<pre><code>##       acc      sens      spec       ppv       auc 
+## 0.4487500 0.3729437 0.5919444 0.5344444 0.5154185</code></pre>
+<p>For 0 average happiness, the log odds is 6.8952. THat is the intercept value. Every 1 unit increase in trust in government multiplies odds by 2.399377e-03. Every 1 unit increase in economy multiplies the odds of average happiness by 1.137400e-03.
+The accuracy is 0.8101266. Sensitivity is 0.797619. Specificity is 0.8243243. PPV is 0.8375.
+The AUC is 0.922 which is pretty accurate. The AUC is the probability that a person with above average happiness has a higher prediction than a randomly selected person with below average happiness. THe plot shows the relationship between sensitivity and specificty. The area under this curve shows the AUC which is a high number. The 10 fold CV gives a 0.448 accuracy, 0.372 sensitivity and a 0.5919 recall. THis is worse than the logistic regression without the cross validation.</p>
+</div>
+<div id="lasso-regression" class="section level2">
+<h2>LASSO Regression</h2>
+<pre class="r"><code>library(glmnet)
+x &lt;- model.matrix(fit)
+x &lt;- x[,-new$avg]
+x &lt;- scale(x)
+y &lt;- as.matrix(new$avg)
+
+# cv&lt;-cv.glmnet(x,y) lasso1&lt;-glmnet(x,y,lambda=cv$lambda.1se)
+# coef(lasso1)
+
+set.seed(1234)
+data1&lt;-new[sample(nrow(new)),]
+folds&lt;-cut(seq(1:nrow(new)),breaks=k,labels=F)
+diags&lt;-NULL
+for(i in 1:k){
+ train&lt;-data1[folds!=i,]
+ test&lt;-data1[folds==i,]
+ truth&lt;-test$avg
+ fit&lt;-glm(avg~Happiness.Rank,data=train,family=&quot;binomial&quot;)
+ probs&lt;-predict(fit,newdata = test,type=&quot;response&quot;)
+ preds&lt;-ifelse(probs&gt;.5,1,0)
+ diags&lt;-rbind(diags,class_diag(probs,truth))
+}
+diags%&gt;%summarize_all(mean)</code></pre>
+<pre><code>##    acc      sens      spec ppv       auc
+## 1 0.38 0.4561905 0.4758333 NaN 0.3946519</code></pre>
+<p>To perform a LASSO regression, I had to check which variables could be used as predictors. The only variable that appeared in the test was “Happiness Rank.” So I used this variable in my 10 fold CV. The out of sample accuracy for this model is 0.38. This is worse than the 10 fold CV.
+```</p>
+</div>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>
